@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="情侶對話">
+<title>情侶深度對話卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#080808;font-family:'Noto Serif TC',serif;color:#f0ece4;overflow-x:hidden}
+  body{-webkit-text-size-adjust:100%}
+  button{font-family:'Noto Serif TC',serif;cursor:pointer}
+
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  @keyframes twinkle{0%,100%{opacity:.08;transform:scale(1)}50%{opacity:.5;transform:scale(1.6)}}
+  @keyframes float0{0%,100%{transform:translateX(calc(-50% + -80px)) rotate(-18deg) translateY(20px)}50%{transform:translateX(calc(-50% + -80px)) rotate(-15deg) translateY(10px)}}
+  @keyframes float1{0%,100%{transform:translateX(calc(-50% + -30px)) rotate(-8deg) translateY(0px)}50%{transform:translateX(calc(-50% + -30px)) rotate(-11deg) translateY(-8px)}}
+  @keyframes float2{0%,100%{transform:translateX(calc(-50% + 30px)) rotate(5deg) translateY(10px)}50%{transform:translateX(calc(-50% + 30px)) rotate(8deg) translateY(2px)}}
+  @keyframes float3{0%,100%{transform:translateX(calc(-50% + 85px)) rotate(20deg) translateY(25px)}50%{transform:translateX(calc(-50% + 85px)) rotate(17deg) translateY(14px)}}
+  @keyframes drawCard{0%{opacity:0;transform:translateY(70px) rotate(-6deg) scale(.82)}60%{opacity:1;transform:translateY(-6px) rotate(1deg) scale(1.02)}100%{opacity:1;transform:translateY(0) rotate(0) scale(1)}}
+  @keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  @keyframes bounceIn{0%{transform:scale(0);opacity:0}60%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
+  @keyframes swipeLeft{0%{opacity:1;transform:translateX(0) rotate(0)}100%{opacity:0;transform:translateX(-70px) rotate(-5deg)}}
+  @keyframes swipeRight{0%{opacity:1;transform:translateX(0) rotate(0)}100%{opacity:0;transform:translateX(70px) rotate(5deg)}}
+  @keyframes particle{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0);opacity:0}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  ::-webkit-scrollbar{width:3px}
+  ::-webkit-scrollbar-track{background:#080808}
+  ::-webkit-scrollbar-thumb{background:#2a1a0a;border-radius:2px}
+
+  #root{min-height:100vh;display:flex;align-items:center;justify-content:center}
+
+  .screen{min-height:100vh;width:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:20px}
+  .screen-scroll{min-height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;position:relative;overflow-y:auto;padding:20px 0 60px}
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+  .star{position:absolute;border-radius:50%;background:#fff}
+  .inner{position:relative;z-index:1;width:100%;max-width:420px;padding:0 20px}
+  .inner-sm{position:relative;z-index:1;width:100%;max-width:440px;padding:0 18px}
+
+  /* Card flip */
+  .card-wrap{width:100%;max-width:320px;aspect-ratio:2/3;position:relative;cursor:pointer;-webkit-perspective:1200px;perspective:1200px}
+  .card-inner{width:100%;height:100%;position:relative;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;-webkit-transition:-webkit-transform .6s ease;transition:transform .6s ease,-webkit-transform .6s ease}
+  .card-inner.flipped{-webkit-transform:rotateY(180deg) translateZ(0);transform:rotateY(180deg) translateZ(0)}
+  .card-face{position:absolute;inset:0;border-radius:22px;overflow:hidden;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+  .card-back{-webkit-transform:translateZ(0);transform:translateZ(0)}
+  .card-front{-webkit-transform:rotateY(180deg) translateZ(1px);transform:rotateY(180deg) translateZ(1px)}
+
+  .draw-anim{animation:drawCard .65s cubic-bezier(.2,1.4,.4,1) forwards}
+  .swipe-left{animation:swipeLeft .3s ease forwards}
+  .swipe-right{animation:swipeRight .3s ease forwards}
+
+  /* Buttons */
+  .btn-primary{width:100%;padding:17px 0;border-radius:14px;border:none;color:#fff;font-size:16px;font-weight:800;letter-spacing:3px;background:linear-gradient(135deg,#c0392b 0%,#6b0f08 50%,#c0392b 100%);background-size:200% 100%;animation:gradShift 3s linear infinite;box-shadow:0 8px 40px rgba(192,57,43,.45)}
+  .btn-ghost{width:100%;padding:13px 0;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#7a6a5a;font-size:13px;font-weight:600;letter-spacing:2px}
+  .btn-nav{background:none;border:none;color:#4a3a2a;font-size:12px;letter-spacing:2px;padding:0}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+const {useState,useEffect,useRef} = React;
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const DECKS=[
+  {id:1,emoji:"💙",name:"重新喜歡你",sub:"破冰 & 升溫",tier:"basic",color:"#4A90D9",dark:"#1a3a5c",light:"#a8d4f5",cards:["最近一次讓你重新喜歡上我的瞬間是什麼？","我做過哪件小事讓你覺得很貼心？","你覺得我們最自然的相處模式是什麼？","有沒有一個關於我的習慣，你其實很喜歡？","你最喜歡我們一起做的日常小事是什麼？","如果用一個畫面形容我們現在，你會想到什麼？","你覺得我哪一點最讓你安心？","有沒有一個瞬間，你覺得「還好是我們」？","你最喜歡我怎麼對你？","我哪一面是你一開始沒發現，後來很加分的？","如果要選，我們比較像朋友、戀人還是家人？","你覺得我們最合拍的一件事是什麼？","最近一次你被我逗笑是什麼時候？","你覺得我們之間最可愛的互動是什麼？","如果把我們的關係當一部電影，現在是哪一段？","你最喜歡我叫你的方式是什麼？","我哪一個表情或動作你覺得最有感？","你覺得我哪一點讓你感到被重視？","我做什麼會讓你覺得「被寵」？","如果今天重新認識我，你還會喜歡我嗎？為什麼？"]},
+  {id:2,emoji:"💛",name:"更懂彼此",sub:"理解 & 日常相處",tier:"basic",color:"#D4A017",dark:"#4a3000",light:"#f5d97a",cards:["當你心情不好時，你最希望我怎麼陪你？","有沒有哪件事你希望我更懂你？","我做過讓你誤會的事情是什麼？","你覺得我們最容易卡住的溝通點是什麼？","如果我們吵架，你最希望我先做什麼？","你覺得被愛的感覺，對你來說是什麼？","你比較需要「被聽懂」還是「被安慰」？","有沒有一件你不太說，但其實很在意的事？","我做什麼會讓你覺得壓力大？","你覺得我在哪方面可以做得更好？","你希望我們多花時間做什麼事情？","有沒有哪種相處方式你其實不太喜歡？","你最怕我誤會你什麼？","你希望我們有什麼固定的小儀式？","你覺得我們的關係最需要被調整的是什麼？","有沒有一件事，你希望我能主動一點？","你覺得我們在忙碌時，最容易忽略什麼？","你會怎麼形容我們現在的相處品質？","有沒有哪個 moment 讓你覺得我們其實很懂彼此？","你覺得我們在哪一刻最像一個「團隊」？"]},
+  {id:3,emoji:"❤️",name:"更深一點",sub:"情感 & 安全感",tier:"basic",color:"#C0392B",dark:"#4a0a0a",light:"#f5a09a",cards:["在感情裡，你最害怕的是什麼？","你過去的經驗，怎麼影響你現在的愛？","你最需要的安全感，通常來自什麼？","有沒有一部分的你，是你很想讓我懂的？","你覺得自己是一個容易表達愛的人嗎？","你什麼時候最容易沒有安全感？","當你不開心但不說時，通常在想什麼？","你最怕我們之間發生什麼改變？","你曾經在哪一刻，開始更信任我？","有沒有一件事，你其實很需要我但沒說？","你覺得愛久了，最難的是什麼？","你曾經有想過放棄這段關係嗎？為什麼？","有沒有哪件事，你一直放在心裡但沒講？","你最希望我怎麼愛你，才是對的方式？","你覺得我們之間有沒有什麼沒說開的？","你覺得「被理解」對你重要嗎？為什麼？","你最脆弱的時候，會希望我怎麼做？","你有沒有哪個情緒，是不太敢讓我看到的？","如果可以更坦白一點，你現在最想對我說什麼？","你覺得我們的愛，最珍貴的是哪一部分？"]},
+  {id:4,emoji:"💚",name:"未來與我們",sub:"承諾 & 成長",tier:"basic",color:"#27AE60",dark:"#0a3a1a",light:"#7fdba0",cards:["你想像中的我們，1年後是什麼樣子？","你覺得我們要怎麼做，才能走得更久？","你最期待和我一起完成的事情是什麼？","你覺得「一起成長」對我們來說是什麼？","你希望我們未來多一點什麼？少一點什麼？","有沒有一個夢想，是你希望我一起參與的？","你覺得我們的關係現在最缺的是什麼？","你希望我們如何面對壓力或低潮？","如果未來很忙，你希望我們怎麼維持關係？","你希望我們之間有什麼長期的約定？","有沒有一個地方，你很想和我一起去？","你覺得我們未來最大的挑戰會是什麼？","你希望我在你人生中扮演什麼角色？","如果可以一起建立一個生活風格，你會選什麼？","你覺得我們怎麼做可以讓感情不變淡？","你希望我們之間的信任可以到什麼程度？","你覺得我們要怎麼成為彼此更好的伴侶？","如果未來遇到困難，你希望我們怎麼一起撐過？","你想要我們的關係，被別人怎麼形容？","如果要為我們的未來下一個標題，你會寫什麼？"]},
+  {id:5,emoji:"✦",name:"說出平常不會講的",sub:"打開內心",tier:"premium",color:"#9B59B6",dark:"#2d0a4a",light:"#d7a8f0",cards:["有沒有一件事你其實很在意，但一直沒說？","有哪一次你其實受傷了，但選擇忍住？","你最怕我誤解你的哪一點？","有沒有一個你覺得我還不夠懂你的地方？","你曾經想要我多做一點什麼，但沒有開口？","有沒有一個情緒，你不太敢讓我看到？","你最害怕在我們之間失去的是什麼？","有沒有哪句話你很想對我說，但一直沒說出口？","你覺得我在哪個時候最忽略你？","有沒有哪件事你其實一直放在心裡？"]},
+  {id:6,emoji:"✧",name:"改善關係",sub:"直接讓感情升級",tier:"premium",color:"#E67E22",dark:"#4a1a00",light:"#f5c08a",cards:["有哪一件小事，如果我改變，會讓你更幸福？","你希望我怎麼表達愛，才是你最有感的？","有沒有一種相處方式，你希望我們可以改掉？","你覺得我們現在最需要調整的是什麼？","你希望我在什麼時候更主動？","如果要讓我們更穩定，你覺得最重要的是什麼？","你覺得我們可以建立什麼新的習慣？","有沒有一件事你希望我們可以一起堅持？","你覺得我們可以怎麼減少誤會？","如果只能改一件事讓感情變更好，你會選哪一個？"]},
+  {id:7,emoji:"★",name:"感謝與肯定",sub:"讓對方被愛",tier:"premium",color:"#F1C40F",dark:"#3a2a00",light:"#fde88a",cards:["有哪件事你很感謝我，但沒有說過？","你最欣賞我的哪個特質？","我做過什麼讓你覺得很驕傲？","你覺得我在哪一刻真的很成熟？","有沒有哪件事你覺得「還好有我」？","你覺得我為這段關係付出最多的是什麼？","你最喜歡我對你的哪一種好？","有沒有一件小事，你其實一直記得？","你覺得我最溫柔的時候是什麼時候？","如果要對我說一句謝謝，你會說什麼？"]},
+  {id:8,emoji:"♥",name:"衝突修復",sub:"解決吵架",tier:"premium",color:"#E74C3C",dark:"#4a0808",light:"#f5a8a0",cards:["我們最近一次吵架，你其實在意的是什麼？","當我們衝突時，你最需要我做什麼？","有沒有一種方式會讓你更容易冷靜下來？","你最不喜歡我吵架時的哪個反應？","你希望我們怎麼結束一場爭吵？","有沒有一個你希望我們訂下的「吵架規則」？","你覺得我們吵架時，真正的問題通常是什麼？","你會怎麼定義「好的溝通」？","你希望我怎麼聽你說話？","如果我們再遇到同樣問題，你希望怎麼處理？"]},
+  {id:9,emoji:"◆",name:"一起變更好",sub:"成長型關係",tier:"premium",color:"#1ABC9C",dark:"#0a3028",light:"#7fead8",cards:["你覺得我可以在哪方面變得更好？","你希望我們可以一起進步的是什麼？","有沒有一個目標，你希望我們一起努力？","你覺得我們怎麼讓彼此更強？","你覺得我在哪個時候最有潛力？","有沒有一個你希望我更勇敢的地方？","你希望我們成為哪一種伴侶？","你覺得我們可以怎麼互相支持彼此的夢想？","你覺得我什麼時候最需要被鼓勵？","如果我們一起變強，會是什麼樣子？"]},
+  {id:10,emoji:"◉",name:"重新愛上彼此",sub:"感情升溫",tier:"premium",color:"#3498DB",dark:"#0a1e3a",light:"#90caf5",cards:["最近一次讓你心動的瞬間是什麼？","你覺得我們什麼時候最有火花？","如果可以重新約會，你想怎麼開始？","你最懷念我們哪一段時光？","有沒有一個畫面，你希望我們再一起經歷一次？","你覺得我哪一點讓你一直放不下？","如果今天重新追求你，我該怎麼做？","你覺得我們可以怎麼讓感情再更熱一點？","你最想和我一起做但還沒做的事是什麼？","如果現在是戀愛初期，你會怎麼形容我們？"]},
+];
+
+const STORAGE_KEY='couples-v2-progress';
+
+function loadProgress(){try{const v=localStorage.getItem(STORAGE_KEY);return v?JSON.parse(v):{}}catch{return{}}}
+function saveProgress(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d))}catch{}}
+function clearProgress(){try{localStorage.removeItem(STORAGE_KEY)}catch{}}
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+// ── STARS ─────────────────────────────────────────────────────────────────────
+function Stars(){
+  const stars=Array.from({length:55},(_,i)=>({
+    x:Math.random()*100,y:Math.random()*100,
+    s:.5+Math.random()*1.5,o:.08+Math.random()*.25,
+    d:2+Math.random()*4,delay:Math.random()*3
+  }));
+  return React.createElement('div',{className:'stars'},
+    stars.map((s,i)=>React.createElement('div',{key:i,className:'star',style:{
+      left:s.x+'%',top:s.y+'%',width:s.s,height:s.s,opacity:s.o,
+      animation:`twinkle ${s.d}s ease-in-out ${s.delay}s infinite`
+    }}))
+  );
+}
+
+// ── CARD ──────────────────────────────────────────────────────────────────────
+function Card({card,flipped,onFlip,drawAnim,burst}){
+  const d=card.deck;
+  const [particles,setParticles]=useState([]);
+
+  useEffect(()=>{
+    if(burst){
+      const ps=Array.from({length:16},(_,i)=>{
+        const angle=(i/16)*360;
+        const dist=60+Math.random()*70;
+        return{id:i,angle,dist,size:3+Math.random()*5,delay:Math.random()*.25};
+      });
+      setParticles(ps);
+      const t=setTimeout(()=>setParticles([]),900);
+      return()=>clearTimeout(t);
+    }
+  },[burst]);
+
+  const fs=card.question.length>24?'15px':card.question.length>16?'17px':'20px';
+
+  return React.createElement('div',{
+    className:'card-wrap'+(drawAnim?' draw-anim':''),
+    onClick:onFlip,
+    style:{margin:'0 auto'}
+  },
+    // glow
+    React.createElement('div',{style:{position:'absolute',inset:-16,borderRadius:32,background:`radial-gradient(ellipse at 50% 60%,${d.color}44 0%,transparent 70%)`,pointerEvents:'none',opacity:flipped?1:.5,transition:'opacity .5s'}}),
+    // inner flip
+    React.createElement('div',{className:'card-inner'+(flipped?' flipped':'')},
+      // BACK
+      React.createElement('div',{className:'card-face card-back',style:{
+        background:`linear-gradient(160deg,${d.dark} 0%,#0d0d0d 55%,${d.dark} 100%)`,
+        border:`1.5px solid ${d.color}55`,
+        boxShadow:`0 0 0 1px ${d.color}22,0 16px 60px ${d.color}33,inset 0 1px 0 ${d.color}44`,
+        display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:0,
+      }},
+        // shimmer
+        React.createElement('div',{style:{position:'absolute',inset:0,borderRadius:'inherit',backgroundImage:`repeating-linear-gradient(105deg,transparent 0%,${d.color}08 25%,transparent 50%)`,backgroundSize:'200% 200%',animation:'shimmer 4s linear infinite',pointerEvents:'none'}}),
+        // corners
+        ...[{top:'10px',left:'10px',borderTop:`1.5px solid ${d.color}55`,borderLeft:`1.5px solid ${d.color}55`},
+            {top:'10px',right:'10px',borderTop:`1.5px solid ${d.color}55`,borderRight:`1.5px solid ${d.color}55`},
+            {bottom:'10px',left:'10px',borderBottom:`1.5px solid ${d.color}55`,borderLeft:`1.5px solid ${d.color}55`},
+            {bottom:'10px',right:'10px',borderBottom:`1.5px solid ${d.color}55`,borderRight:`1.5px solid ${d.color}55`}
+        ].map((s,i)=>React.createElement('div',{key:i,style:{position:'absolute',width:16,height:16,pointerEvents:'none',...s}})),
+        // center content
+        React.createElement('div',{style:{position:'relative',zIndex:1,textAlign:'center',padding:'0 20px'}},
+          d.tier==='premium'&&React.createElement('div',{style:{fontSize:9,letterSpacing:4,color:d.color,fontWeight:800,marginBottom:18,textTransform:'uppercase',background:`${d.color}22`,border:`1px solid ${d.color}55`,padding:'3px 10px',borderRadius:20,display:'inline-block'}},
+            '✦ PREMIUM'
+          ),
+          React.createElement('div',{style:{fontSize:44,marginBottom:10,filter:`drop-shadow(0 0 14px ${d.color}88)`}},d.emoji),
+          React.createElement('div',{style:{fontSize:14,fontWeight:800,color:d.light,letterSpacing:2,marginBottom:3,textShadow:`0 0 18px ${d.color}66`}},d.name),
+          React.createElement('div',{style:{fontSize:9,color:`${d.color}88`,letterSpacing:3,textTransform:'uppercase'}},d.sub),
+          React.createElement('div',{style:{margin:'16px auto',width:40,height:1,background:`linear-gradient(90deg,transparent,${d.color},transparent)`}}),
+          React.createElement('div',{style:{fontSize:9,color:`${d.color}66`,letterSpacing:3,textTransform:'uppercase',animation:'pulse 2s ease-in-out infinite'}},'點擊翻牌')
+        ),
+        React.createElement('div',{style:{position:'absolute',bottom:14,right:18,fontSize:9,color:`${d.color}44`,letterSpacing:2}},`No.${card.globalIdx}`)
+      ),
+      // FRONT
+      React.createElement('div',{className:'card-face card-front',style:{
+        background:`linear-gradient(160deg,${d.dark} 0%,#111118 50%,${d.dark} 100%)`,
+        border:`1.5px solid ${d.color}88`,
+        boxShadow:`0 0 0 1px ${d.color}33,0 16px 80px ${d.color}55,inset 0 1px 0 ${d.color}66`,
+      }},
+        // decorative
+        React.createElement('div',{style:{position:'absolute',top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,transparent,${d.color},${d.light},${d.color},transparent)`,borderRadius:'22px 22px 0 0',pointerEvents:'none'}}),
+        React.createElement('div',{style:{position:'absolute',bottom:0,left:0,right:0,height:3,background:`linear-gradient(90deg,transparent,${d.color}88,transparent)`,borderRadius:'0 0 22px 22px',pointerEvents:'none'}}),
+        React.createElement('div',{style:{position:'absolute',top:'25%',left:'50%',transform:'translate(-50%,-50%)',width:'160%',height:'55%',background:`radial-gradient(ellipse,${d.color}12 0%,transparent 70%)`,pointerEvents:'none'}}),
+        // particles
+        ...particles.map(p=>React.createElement('div',{key:p.id,style:{
+          position:'absolute',left:'50%',top:'50%',
+          width:p.size,height:p.size,borderRadius:'50%',
+          background:d.light,boxShadow:`0 0 ${p.size*2}px ${d.light}`,
+          animation:`particle .8s ${p.delay}s ease-out forwards`,
+          '--dx':`${Math.cos(p.angle*Math.PI/180)*p.dist}px`,
+          '--dy':`${Math.sin(p.angle*Math.PI/180)*p.dist}px`,
+          pointerEvents:'none',
+        }})),
+        // content
+        React.createElement('div',{style:{position:'relative',zIndex:1,width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'space-between',padding:'24px 20px 18px',boxSizing:'border-box'}},
+          React.createElement('div',{style:{flexShrink:0,background:`${d.color}22`,border:`1px solid ${d.color}55`,borderRadius:20,padding:'4px 12px',fontSize:9,color:d.color,fontWeight:700,letterSpacing:2,display:'flex',alignItems:'center',gap:5,whiteSpace:'nowrap'}},
+            React.createElement('span',{style:{fontSize:12}},d.emoji),
+            React.createElement('span',{style:{textTransform:'uppercase'}},d.name)
+          ),
+          React.createElement('div',{style:{flex:1,display:'flex',alignItems:'center',justifyContent:'center',padding:'12px 4px',minHeight:0}},
+            React.createElement('p',{style:{fontSize:fs,lineHeight:1.9,textAlign:'center',color:'#f8f0e8',fontWeight:600,letterSpacing:1.5,margin:0,wordBreak:'break-word',overflowWrap:'break-word',textShadow:`0 2px 16px ${d.color}33`}},
+              card.question
+            )
+          ),
+          React.createElement('div',{style:{flexShrink:0,textAlign:'center'}},
+            React.createElement('div',{style:{width:28,height:1,background:`linear-gradient(90deg,transparent,${d.color}66,transparent)`,margin:'0 auto 6px'}}),
+            React.createElement('div',{style:{fontSize:8,color:`${d.color}55`,letterSpacing:3,textTransform:'uppercase'}},`No.${card.globalIdx}`)
+          )
+        )
+      )
+    )
+  );
+}
+
+// ── PROGRESS SCREEN ───────────────────────────────────────────────────────────
+function ProgressScreen({onBack,doneCardIds,onClear}){
+  const [clearing,setClearing]=useState(false);
+  const allDone=Object.values(doneCardIds).flat();
+  const total=DECKS.reduce((s,d)=>s+d.cards.length,0);
+  const pct=total>0?Math.round((allDone.length/total)*100):0;
+
+  function handleClear(){
+    setClearing(true);
+    clearProgress();
+    onClear();
+    setTimeout(()=>setClearing(false),300);
+  }
+
+  return React.createElement('div',{className:'screen-scroll'},
+    React.createElement(Stars),
+    React.createElement('div',{className:'inner-sm',style:{paddingTop:8}},
+      React.createElement('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:24}},
+        React.createElement('button',{className:'btn-nav',onClick:onBack},'← 返回'),
+        React.createElement('span',{style:{fontSize:11,letterSpacing:3,color:'#6a5a4a',textTransform:'uppercase'}},'進度紀錄'),
+        React.createElement('button',{onClick:handleClear,disabled:clearing,style:{background:'none',border:'none',color:'#7a3030',fontSize:10,letterSpacing:1,cursor:'pointer'}},clearing?'清除中...':'全部清除')
+      ),
+      // Overall card
+      React.createElement('div',{style:{background:'rgba(255,255,255,.04)',border:'1px solid rgba(255,255,255,.09)',borderRadius:20,padding:'20px 20px 16px',marginBottom:18}},
+        React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}},
+          React.createElement('div',null,
+            React.createElement('div',{style:{fontSize:9,color:'#5a4a3a',letterSpacing:3,textTransform:'uppercase',marginBottom:4}},'總完成進度'),
+            React.createElement('div',{style:{fontSize:32,fontWeight:900,color:'#f5ece0',lineHeight:1}},
+              allDone.length,
+              React.createElement('span',{style:{fontSize:13,color:'#4a3a2a',fontWeight:400}},` / ${total} 題`)
+            ),
+            React.createElement('div',{style:{fontSize:10,color:'#5a4a3a',marginTop:3}},`${pct}% 完成`)
+          ),
+          React.createElement('div',{style:{fontSize:44,filter:allDone.length===0?'grayscale(.5)':'none'}},
+            allDone.length===0?'🌱':pct<30?'🌿':pct<60?'🌸':pct<100?'🌺':'💕'
+          )
+        ),
+        React.createElement('div',{style:{height:7,background:'rgba(255,255,255,.06)',borderRadius:4,overflow:'hidden'}},
+          React.createElement('div',{style:{height:'100%',borderRadius:4,background:'linear-gradient(90deg,#c0392b88,#f5a0b0,#f5dfe9)',width:`${pct}%`,transition:'width .8s ease',boxShadow:allDone.length>0?'0 0 10px rgba(240,160,176,.5)':'none'}})
+        ),
+        React.createElement('div',{style:{fontSize:9,color:'#3a2a1a',marginTop:8,letterSpacing:1,textAlign:'center'}},
+          allDone.length===0?'還沒開始，快去抽第一張卡吧 💙':
+          allDone.length===total?'所有題目全部完成！你們真的很了不起 💕':
+          `還剩 ${total-allDone.length} 題等你們一起探索`
+        )
+      ),
+      React.createElement('div',{style:{fontSize:9,letterSpacing:3,color:'#3a2a1a',textTransform:'uppercase',marginBottom:10}},'各牌組進度'),
+      React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:8}},
+        DECKS.map(d=>{
+          const doneCnt=(doneCardIds[d.id]||[]).length;
+          const dp=Math.round((doneCnt/d.cards.length)*100);
+          const isDone=doneCnt===d.cards.length;
+          return React.createElement('div',{key:d.id,style:{
+            background:doneCnt>0?`${d.color}0d`:'rgba(255,255,255,.02)',
+            border:`1px solid ${doneCnt>0?d.color+'30':'rgba(255,255,255,.06)'}`,
+            borderRadius:13,padding:'12px 14px',
+          }},
+            React.createElement('div',{style:{display:'flex',alignItems:'center',gap:10,marginBottom:doneCnt>0?7:0}},
+              React.createElement('span',{style:{fontSize:17,flexShrink:0,opacity:doneCnt===0?.4:1}},d.emoji),
+              React.createElement('div',{style:{flex:1,minWidth:0}},
+                React.createElement('div',{style:{fontSize:12,fontWeight:700,color:doneCnt>0?d.light:'#4a3a2a',letterSpacing:1}},d.name),
+                React.createElement('div',{style:{fontSize:9,color:doneCnt>0?`${d.color}77`:'#2a1a0a',letterSpacing:1}},d.sub)
+              ),
+              isDone
+                ?React.createElement('div',{style:{fontSize:10,color:d.color,fontWeight:700,flexShrink:0}},'完成 ✓')
+                :React.createElement('div',{style:{fontSize:13,fontWeight:800,color:doneCnt>0?d.color:'#3a2a1a',flexShrink:0}},
+                    doneCnt,React.createElement('span',{style:{fontSize:9,fontWeight:400,color:'#3a2a1a'}},`/${d.cards.length}`)
+                  )
+            ),
+            doneCnt>0&&React.createElement('div',{style:{height:2,background:'rgba(255,255,255,.05)',borderRadius:1,overflow:'hidden'}},
+              React.createElement('div',{style:{height:'100%',borderRadius:1,background:`linear-gradient(90deg,${d.color}88,${d.light})`,width:`${dp}%`,boxShadow:`0 0 5px ${d.color}55`}})
+            )
+          );
+        })
+      ),
+      React.createElement('div',{style:{marginTop:20,fontSize:9,color:'#2a1a0a',letterSpacing:1,textAlign:'center'}},'進度自動保存 · 下次打開還在')
+    )
+  );
+}
+
+// ── DECK SELECTOR ─────────────────────────────────────────────────────────────
+function DeckSelector({onStart,doneCardIds}){
+  const [selected,setSelected]=useState(new Set([1,2,3,4]));
+  const [skipDone,setSkipDone]=useState(true);
+
+  function toggle(id){setSelected(s=>{const n=new Set(s);n.has(id)?n.delete(id):n.add(id);return n})}
+  function selAll(){setSelected(new Set(DECKS.map(d=>d.id)))}
+  function selBasic(){setSelected(new Set(DECKS.filter(d=>d.tier==='basic').map(d=>d.id)))}
+  function selPrem(){setSelected(new Set(DECKS.filter(d=>d.tier==='premium').map(d=>d.id)))}
+
+  const selDecks=DECKS.filter(d=>selected.has(d.id));
+  const totalCards=selDecks.reduce((s,d)=>s+(skipDone?d.cards.length-(doneCardIds[d.id]||[]).length:d.cards.length),0);
+  const totalDoneInSel=selDecks.reduce((s,d)=>s+(doneCardIds[d.id]||[]).length,0);
+
+  function DeckRow({deck}){
+    const dc=(doneCardIds[deck.id]||[]).length;
+    const rem=skipDone?deck.cards.length-dc:deck.cards.length;
+    const isDone=dc===deck.cards.length;
+    const dp=Math.round((dc/deck.cards.length)*100);
+    const sel=selected.has(deck.id);
+    return React.createElement('button',{onClick:()=>toggle(deck.id),style:{
+      background:sel?`${deck.color}18`:'rgba(255,255,255,.03)',
+      border:`1.5px solid ${sel?deck.color+'55':'rgba(255,255,255,.08)'}`,
+      borderRadius:13,padding:'11px 14px',cursor:'pointer',
+      display:'flex',alignItems:'center',gap:12,transition:'all .2s',
+      width:'100%',textAlign:'left',opacity:isDone&&skipDone?.6:1,
+    }},
+      React.createElement('div',{style:{width:34,height:34,borderRadius:9,flexShrink:0,background:sel?`${deck.color}33`:'rgba(255,255,255,.05)',border:`1px solid ${sel?deck.color+'44':'rgba(255,255,255,.07)'}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,filter:sel?`drop-shadow(0 0 6px ${deck.color}88)`:'grayscale(.5)'}},deck.emoji),
+      React.createElement('div',{style:{flex:1,minWidth:0}},
+        React.createElement('div',{style:{fontSize:12,fontWeight:700,color:sel?deck.light:'#7a6a5a',letterSpacing:1,marginBottom:2}},deck.name),
+        React.createElement('div',{style:{fontSize:9,color:sel?`${deck.color}77`:'#3a2a1a',letterSpacing:1,marginBottom:dc>0?5:0}},
+          deck.sub+' · '+(skipDone&&dc>0?`剩 ${rem} 題`:`${deck.cards.length} 題`)+(isDone?' ✓ 已完成':dc>0?` (已答${dc})`:'')
+        ),
+        dc>0&&React.createElement('div',{style:{height:2,background:'rgba(255,255,255,.06)',borderRadius:1,overflow:'hidden'}},
+          React.createElement('div',{style:{height:'100%',borderRadius:1,background:`linear-gradient(90deg,${deck.color}77,${deck.light})`,width:`${dp}%`}})
+        )
+      ),
+      React.createElement('div',{style:{width:19,height:19,borderRadius:'50%',background:sel?deck.color:'transparent',border:`1.5px solid ${sel?deck.color:'rgba(255,255,255,.14)'}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,color:'#fff',flexShrink:0,boxShadow:sel?`0 0 10px ${deck.color}66`:'none'}},sel?'✓':'')
+    );
+  }
+
+  return React.createElement('div',{style:{width:'100%',maxWidth:440,padding:'0 16px'}},
+    React.createElement('div',{style:{textAlign:'center',marginBottom:24}},
+      React.createElement('div',{style:{fontSize:10,letterSpacing:4,color:'#5a4a3a',textTransform:'uppercase',marginBottom:6}},'選擇牌組'),
+      React.createElement('h2',{style:{fontSize:22,fontWeight:900,color:'#f5ece0',letterSpacing:2,margin:0}},'Select Decks')
+    ),
+    React.createElement('div',{style:{display:'flex',gap:8,marginBottom:18,justifyContent:'center'}},
+      [['全部',selAll],['基礎版',selBasic],['升級版',selPrem]].map(([l,fn])=>
+        React.createElement('button',{key:l,onClick:fn,style:{background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.1)',borderRadius:20,padding:'5px 12px',color:'#9a8a7a',fontSize:10,letterSpacing:2,cursor:'pointer'}},l)
+      )
+    ),
+    React.createElement('div',{style:{fontSize:9,letterSpacing:3,color:'#3a2a1a',textTransform:'uppercase',marginBottom:9}},'── 基礎版 ──'),
+    React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:7,marginBottom:18}},
+      DECKS.filter(d=>d.tier==='basic').map(d=>React.createElement(DeckRow,{key:d.id,deck:d}))
+    ),
+    React.createElement('div',{style:{fontSize:9,letterSpacing:3,color:'#3a2a1a',textTransform:'uppercase',marginBottom:9}},'── 升級版 ✦ ──'),
+    React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:7,marginBottom:22}},
+      DECKS.filter(d=>d.tier==='premium').map(d=>React.createElement(DeckRow,{key:d.id,deck:d}))
+    ),
+    totalDoneInSel>0&&React.createElement('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(255,255,255,.03)',border:'1px solid rgba(255,255,255,.07)',borderRadius:11,padding:'11px 14px',marginBottom:10}},
+      React.createElement('div',null,
+        React.createElement('div',{style:{fontSize:11,color:'#8a7a6a',letterSpacing:1,fontWeight:600}},'跳過已回答的題目'),
+        React.createElement('div',{style:{fontSize:9,color:'#4a3a2a',letterSpacing:1,marginTop:2}},
+          `已回答 ${totalDoneInSel} 題，`+(skipDone?`剩 ${totalCards} 題未答`:'顯示全部')
+        )
+      ),
+      React.createElement('button',{onClick:()=>setSkipDone(s=>!s),style:{width:42,height:24,borderRadius:12,border:'none',cursor:'pointer',background:skipDone?'#c0392b':'rgba(255,255,255,.1)',position:'relative',transition:'background .25s',flexShrink:0}},
+        React.createElement('div',{style:{position:'absolute',top:2,left:skipDone?20:2,width:20,height:20,borderRadius:'50%',background:'#fff',transition:'left .25s',boxShadow:'0 1px 4px rgba(0,0,0,.3)'}})
+      )
+    ),
+    React.createElement('button',{
+      className:'btn-primary',
+      onClick:()=>selected.size>0&&totalCards>0&&onStart(DECKS.filter(d=>selected.has(d.id)),skipDone),
+      disabled:selected.size===0||totalCards===0,
+      style:{opacity:selected.size===0||totalCards===0?.4:1}
+    },totalCards===0?'此牌組已全部完成 ✓':selected.size>0?`抽卡開始 — ${totalCards} 題`:'請選擇牌組')
+  );
+}
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────────
+function App(){
+  const [screen,setScreen]=useState('home');
+  const [gameCards,setGameCards]=useState([]);
+  const [idx,setIdx]=useState(0);
+  const [flipped,setFlipped]=useState(false);
+  const [drawAnim,setDrawAnim]=useState(false);
+  const [burst,setBurst]=useState(false);
+  const [transitioning,setTransitioning]=useState(false);
+  const [swipeDir,setSwipeDir]=useState(0);
+  const [showHint,setShowHint]=useState(false);
+  const [doneCardIds,setDoneCardIds]=useState(()=>loadProgress());
+  const touchX=useRef(null);
+  const current=gameCards[idx];
+  const totalDone=Object.values(doneCardIds).flat().length;
+  const totalCards=DECKS.reduce((s,d)=>s+d.cards.length,0);
+
+  // Persist on change
+  useEffect(()=>{saveProgress(doneCardIds)},[doneCardIds]);
+
+  function markDone(card){
+    const did=card.deck.id,cid=card.id;
+    setDoneCardIds(prev=>{
+      const ex=prev[did]||[];
+      if(ex.includes(cid))return prev;
+      return{...prev,[did]:[...ex,cid]};
+    });
+  }
+
+  function startGame(decks,skipDone=true){
+    const all=decks.flatMap(d=>d.cards.map((q,i)=>({id:`${d.id}-${i}`,question:q,deck:d,globalIdx:0})));
+    const filtered=skipDone?all.filter(c=>!(doneCardIds[c.deck.id]||[]).includes(c.id)):all;
+    if(!filtered.length)return;
+    const cards=shuffle(filtered).map((c,i)=>({...c,globalIdx:i+1}));
+    setGameCards(cards);setIdx(0);setFlipped(false);setScreen('game');
+    setDrawAnim(true);setTimeout(()=>setDrawAnim(false),700);
+    setShowHint(true);setTimeout(()=>setShowHint(false),3500);
+  }
+
+  function nextCard(dir=1){
+    if(transitioning)return;
+    if(dir===1&&current)markDone(current);
+    if(dir===1&&idx>=gameCards.length-1){setScreen('done');return}
+    if(dir===-1&&idx===0)return;
+    setTransitioning(true);setSwipeDir(dir);
+    setTimeout(()=>{
+      setIdx(i=>i+dir);setFlipped(false);setSwipeDir(0);setTransitioning(false);
+      setDrawAnim(true);setTimeout(()=>setDrawAnim(false),700);
+    },320);
+  }
+
+  function handleFlip(){
+    if(!flipped){setFlipped(true);setBurst(true);setTimeout(()=>setBurst(false),900)}
+  }
+
+  function onTouchStart(e){touchX.current=e.touches[0].clientX}
+  function onTouchEnd(e){
+    if(touchX.current===null)return;
+    const dx=e.changedTouches[0].clientX-touchX.current;
+    if(Math.abs(dx)>50)nextCard(dx<0?1:-1);
+    touchX.current=null;
+  }
+
+  const progress=gameCards.length?((idx+1)/gameCards.length)*100:0;
+
+  // PROGRESS
+  if(screen==='progress')return React.createElement(ProgressScreen,{onBack:()=>setScreen('home'),doneCardIds,onClear:()=>setDoneCardIds({})});
+
+  // HOME
+  if(screen==='home')return React.createElement('div',{className:'screen'},
+    React.createElement(Stars),
+    React.createElement('div',{className:'inner',style:{textAlign:'center'}},
+      // floating cards
+      React.createElement('div',{style:{position:'relative',height:170,marginBottom:28}},
+        [{color:'#C0392B',i:0,emoji:'❤️'},{color:'#27AE60',i:1,emoji:'💚'},{color:'#4A90D9',i:2,emoji:'💙'},{color:'#9B59B6',i:3,emoji:'✦'}]
+        .map((c,n)=>React.createElement('div',{key:n,style:{
+          position:'absolute',left:'50%',top:8,width:78,height:110,borderRadius:10,
+          background:`linear-gradient(160deg,${c.color}33,#0d0d0d)`,
+          border:`1px solid ${c.color}55`,boxShadow:`0 8px 28px ${c.color}33`,
+          display:'flex',alignItems:'center',justifyContent:'center',fontSize:26,
+          animation:`float${c.i} ${3+n*.4}s ease-in-out infinite`,zIndex:n===2?3:2,
+        }},c.emoji))
+      ),
+      React.createElement('div',{style:{fontSize:10,letterSpacing:5,color:'#5a4a3a',textTransform:'uppercase',marginBottom:8}},'Couples Deep Talk'),
+      React.createElement('h1',{style:{fontSize:30,fontWeight:900,letterSpacing:3,margin:'0 0 6px',background:'linear-gradient(135deg,#f5dfe9,#f5c4d0,#f5dfe9)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}},'情侶深度對話'),
+      React.createElement('p',{style:{color:'#5a4a3a',fontSize:11,letterSpacing:2,margin:'0 0 6px'}},'200 題 · 抽卡版'),
+      React.createElement('div',{style:{display:'flex',gap:7,justifyContent:'center',flexWrap:'wrap',margin:'20px 0 28px'}},
+        DECKS.slice(0,4).map(d=>React.createElement('span',{key:d.id,style:{padding:'3px 10px',borderRadius:20,fontSize:10,background:`${d.color}18`,border:`1px solid ${d.color}44`,color:d.color}},d.emoji+' '+d.name)),
+        React.createElement('span',{style:{padding:'3px 10px',borderRadius:20,fontSize:10,background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.1)',color:'#7a6a5a'}},'✦ 升級版 6 組')
+      ),
+      React.createElement('button',{className:'btn-primary',onClick:()=>setScreen('select')},'開始抽卡 ✦'),
+      React.createElement('button',{className:'btn-ghost',onClick:()=>setScreen('progress'),style:{marginTop:10,display:'flex',alignItems:'center',justifyContent:'center',gap:8}},
+        React.createElement('span',null,'📋 進度紀錄'),
+        totalDone>0&&React.createElement('span',{style:{background:'rgba(192,57,43,.3)',border:'1px solid rgba(192,57,43,.5)',borderRadius:12,padding:'1px 7px',fontSize:10,color:'#f5a0a0',fontWeight:800}},`${totalDone}/${totalCards}`)
+      ),
+      React.createElement('p',{style:{color:'#3a2a1a',fontSize:10,marginTop:14,letterSpacing:2}},'兩人一起 · 慢慢回答 · 越聊越近')
+    )
+  );
+
+  // SELECT
+  if(screen==='select')return React.createElement('div',{className:'screen-scroll'},
+    React.createElement(Stars),
+    React.createElement('div',{style:{position:'relative',zIndex:1,width:'100%',maxWidth:440,padding:'0 16px',marginBottom:10}},
+      React.createElement('button',{className:'btn-nav',onClick:()=>setScreen('home')},'← 返回')
+    ),
+    React.createElement(DeckSelector,{onStart:startGame,doneCardIds})
+  );
+
+  // DONE
+  if(screen==='done')return React.createElement('div',{className:'screen'},
+    React.createElement(Stars),
+    React.createElement('div',{className:'inner',style:{textAlign:'center',maxWidth:340}},
+      React.createElement('div',{style:{fontSize:58,marginBottom:14,animation:'bounceIn .7s cubic-bezier(.2,1.6,.4,1)'}},'🎉'),
+      React.createElement('h2',{style:{fontSize:24,fontWeight:900,letterSpacing:3,color:'#f5dfe9',margin:'0 0 14px'}},'完成了！'),
+      React.createElement('p',{style:{color:'#7a6a5a',fontSize:13,lineHeight:2,marginBottom:32,letterSpacing:1}},
+        '謝謝你們願意打開心扉。\n每一個回答，都是禮物。',
+        React.createElement('br'),
+        React.createElement('span',{style:{color:'#4a3a2a',fontSize:11}},`共完成 ${gameCards.length} 道題目 💕`)
+      ),
+      React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:10}},
+        React.createElement('button',{className:'btn-primary',onClick:()=>setScreen('select')},'再玩一次'),
+        React.createElement('button',{className:'btn-ghost',onClick:()=>setScreen('progress')},'📋 查看進度紀錄'),
+        React.createElement('button',{onClick:()=>setScreen('home'),style:{background:'none',border:'none',color:'#4a3a2a',fontSize:12,letterSpacing:2,marginTop:4,cursor:'pointer'}},'回到首頁')
+      )
+    )
+  );
+
+  // GAME
+  if(!current)return null;
+  const d=current.deck;
+  return React.createElement('div',{
+    className:'screen',
+    onTouchStart,onTouchEnd,
+    style:{flexDirection:'column',padding:'16px 20px 20px'}
+  },
+    React.createElement(Stars),
+    React.createElement('div',{style:{position:'fixed',inset:0,background:`radial-gradient(ellipse at 50% 80%,${d.color}15 0%,transparent 60%)`,pointerEvents:'none',transition:'background 1s',zIndex:0}}),
+    React.createElement('div',{style:{position:'relative',zIndex:1,width:'100%',maxWidth:400,display:'flex',flexDirection:'column',alignItems:'center',flex:1}},
+      // top bar
+      React.createElement('div',{style:{width:'100%',display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}},
+        React.createElement('button',{className:'btn-nav',onClick:()=>setScreen('select')},'← 換牌組'),
+        React.createElement('div',{style:{fontSize:11,color:'#5a4a3a',letterSpacing:2}},`${idx+1} / ${gameCards.length}`),
+        React.createElement('button',{onClick:()=>setScreen('progress'),style:{background:'none',border:'none',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',gap:2}},
+          React.createElement('span',{style:{fontSize:15}},'📋'),
+          totalDone>0&&React.createElement('span',{style:{fontSize:8,color:'#5a4a3a',letterSpacing:1}},totalDone)
+        )
+      ),
+      // progress bar
+      React.createElement('div',{style:{width:'100%',height:2,background:'rgba(255,255,255,.06)',borderRadius:2,marginBottom:20,overflow:'hidden'}},
+        React.createElement('div',{style:{height:'100%',borderRadius:2,background:`linear-gradient(90deg,${d.color}88,${d.light})`,width:`${progress}%`,transition:'width .5s ease',boxShadow:`0 0 6px ${d.color}88`}})
+      ),
+      // card
+      React.createElement('div',{
+        style:{width:'100%',display:'flex',justifyContent:'center',flex:1,alignItems:'center',
+          animation:swipeDir!==0?(swipeDir>0?'swipeLeft':'swipeRight')+' .32s ease forwards':'none'}
+      },
+        React.createElement(Card,{card:current,flipped,onFlip:handleFlip,drawAnim,burst})
+      ),
+      // hint
+      React.createElement('div',{style:{fontSize:9,color:'#2a1a0a',letterSpacing:2,textAlign:'center',marginBottom:12,opacity:showHint?1:0,transition:'opacity .5s'}},'點擊翻牌 · 左右滑動切換'),
+      // controls
+      React.createElement('div',{style:{display:'flex',gap:10,width:'100%',alignItems:'center'}},
+        React.createElement('button',{onClick:()=>nextCard(-1),disabled:idx===0||transitioning,style:{
+          flexShrink:0,width:50,height:50,borderRadius:13,
+          background:'rgba(255,255,255,.04)',border:'1px solid rgba(255,255,255,.08)',
+          color:idx===0?'#2a1a0a':'#7a6a5a',fontSize:18,cursor:idx===0?'default':'pointer'
+        }},'←'),
+        React.createElement('button',{onClick:()=>nextCard(1),disabled:transitioning,style:{
+          flex:1,height:50,borderRadius:13,border:`1px solid ${d.color}44`,
+          background:`linear-gradient(135deg,${d.color}cc,${d.dark})`,
+          color:'#fff',fontSize:13,fontWeight:800,letterSpacing:2,cursor:'pointer',
+          boxShadow:`0 4px 24px ${d.color}44`,
+        }},idx>=gameCards.length-1?'完成 ✓':'下一題 →')
+      ),
+      // deck pill
+      React.createElement('div',{style:{display:'flex',gap:6,marginTop:14,flexWrap:'wrap',justifyContent:'center'}},
+        d.tier==='premium'&&React.createElement('span',{style:{padding:'2px 9px',borderRadius:20,fontSize:8,background:`${d.color}22`,border:`1px solid ${d.color}44`,color:d.color,letterSpacing:2,fontWeight:700}},'✦ Premium'),
+        React.createElement('span',{style:{padding:'2px 9px',borderRadius:20,fontSize:8,background:'rgba(255,255,255,.04)',border:'1px solid rgba(255,255,255,.08)',color:'#5a4a3a',letterSpacing:2}},d.emoji+' '+d.name)
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>
